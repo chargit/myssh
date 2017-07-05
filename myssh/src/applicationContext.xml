@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+    http://www.springframework.org/schema/tx
+    http://www.springframework.org/schema/tx/spring-tx.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context-4.3.xsd http://www.springframework.org/schema/tool http://www.springframework.org/schema/tool/spring-tool.xsd">
+
+
+    <context:annotation-config></context:annotation-config>
+    <bean id="testService" class="test.TestService">
+        <property name="name" value="ye"></property>
+    </bean>
+
+    <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource">
+        <property name="driverClassName">
+            <value>com.mysql.jdbc.Driver</value>
+        </property>
+        <property name="url">
+            <value>jdbc:mysql://localhost:3306/myssh</value>
+        </property>
+        <property name="username">
+            <value>root</value>
+        </property>
+        <property name="password">
+            <value>123456</value>
+        </property>
+        <property name="initialSize">
+            <value>3</value>
+        </property>
+        <property name="maxOpenPreparedStatements">
+            <value>255</value>
+        </property>
+        <property name="maxIdle">
+            <value>1</value>
+        </property>
+        <property name="minIdle">
+            <value>1</value>
+        </property>
+    </bean>
+
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+
+        <property name="dataSource" ref="dataSource">
+
+        </property>
+
+        <property name="mappingResources">
+            <list>
+                <value>domain/Employee.hbm.xml</value>
+                <value>domain/Department.hbm.xml</value>
+
+            </list>
+        </property>
+        <property name="hibernateProperties">
+            <value>
+                hibernate.dialect=org.hibernate.dialect.MySQL5Dialect
+                hibernate.hbm2ddl.auto=update
+                hibernate.format_sql=false
+                hibernate.show_sql=true
+            </value>
+        </property>
+
+    </bean>
+    <!--<bean id="employeeService" class="service.imp.EmployeeService">-->
+        <!--<property name="sessionFactory" ref="sessionFactory"></property>-->
+
+    <!--</bean>-->
+
+    <bean id="employeeService" class="service.imp.EmployeeService"></bean>
+    <bean id="departmentService" class="service.imp.DepartmentService">
+        <property name="sessionFactory" ref="sessionFactory"></property>
+    </bean>
+
+    <bean name="/login" scope="prototype" class="web.action.LoginAction">
+    </bean>
+    <bean name="/employee" scope="prototype" class="web.action.EmployeeAction">
+        <property name="employeeService" ref="employeeService"></property>
+        <property name="departmentService" ref="departmentService"></property>
+    </bean>
+    <bean id="txManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory"></property>
+    </bean>
+    <tx:annotation-driven transaction-manager="txManager" proxy-target-class="true"></tx:annotation-driven>
+</beans>

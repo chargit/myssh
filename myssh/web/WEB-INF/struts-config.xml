@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts-config PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 1.1//EN"
+        "http://jakarta.apache.org/struts/dtds/struts-config_1_1.dtd">
+<struts-config>
+
+    <form-beans>
+        <form-bean  name="employeeForm" type="web.forms.EmployeeForm"></form-bean>
+    </form-beans>
+    <action-mappings>
+        <action path="/login" parameter="flag" name="employeeForm" >
+            <forward name="ok" path="/WEB-INF/mainFrame.jsp"></forward>
+            <forward name="err" path="/WEB-INF/login.jsp"></forward>
+
+        </action>
+        <action path="/employee" name="employeeForm" parameter="flag" type="web.action.EmployeeAction">
+            <forward name="goAddEmpUi" path="/WEB-INF/addEmpUi.jsp"></forward>
+            <forward name="goListEmp" path="/WEB-INF/listEmp.jsp"></forward>
+            <forward name="goUpdEmpUi" path="/WEB-INF/updEmpUi.jsp"></forward>
+
+        </action>
+    </action-mappings>
+    
+
+    <global-forwards>
+        <forward name="opererr" path="/WEB-INF/error.jsp"></forward>
+        <forward name="operok" path="/WEB-INF/ok.jsp"></forward>
+
+    </global-forwards>
+    <controller>
+        <set-property property="processorClass" value="org.springframework.web.struts.DelegatingRequestProcessor"></set-property>
+    </controller>
+</struts-config>
